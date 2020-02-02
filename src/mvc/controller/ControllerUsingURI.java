@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,14 +21,16 @@ public class ControllerUsingURI extends HttpServlet {
 
     // <커맨드, 핸들러인스턴스> 매핑 정보 저장
     private Map<String, CommandHandler> commandHandlerMap = 
-    		new HashMap<>(); ///key="/hello.do", value=mvc.hello.HelloHandler의 객체
+    		new HashMap<>();
 
-    public void init() throws ServletException {
+
+
+	public void init() throws ServletException {
         String configFile = getInitParameter("configFile");
         Properties prop = new Properties();
         String configFilePath = getServletContext().getRealPath(configFile);
         try (FileReader fis = new FileReader(configFilePath)) {
-            prop.load(fis);  //key="/hello.do", value="mvc.hello.HelloHandler"
+            prop.load(fis);
         } catch (IOException e) {
             throw new ServletException(e);
         }
@@ -59,10 +62,9 @@ public class ControllerUsingURI extends HttpServlet {
 
     private void process(HttpServletRequest request,
     HttpServletResponse response) throws ServletException, IOException {
-		String command = request.getRequestURI();  // "/bootstrap/hello.do"
+		String command = request.getRequestURI();
 		if (command.indexOf(request.getContextPath()) == 0) {
 			command = command.substring(request.getContextPath().length());
-			// "/login.do"
 		}
         CommandHandler handler = commandHandlerMap.get(command);
         if (handler == null) {
@@ -71,13 +73,13 @@ public class ControllerUsingURI extends HttpServlet {
         String viewPage = null;
         try {
             viewPage = handler.process(request, response);
-            //"/WEB-INF/view/hello.jsp"
         } catch (Throwable e) {
             throw new ServletException(e);
         }
         if (viewPage != null) {
 	        RequestDispatcher dispatcher = request.getRequestDispatcher(viewPage);
 	        dispatcher.forward(request, response);
+	        
         }
     }
 }

@@ -15,7 +15,7 @@ public class JdbcUtil {
 			}
 		}
 	}
-
+	
 	public static void close(Statement stmt) {
 		if (stmt != null) {
 			try {
@@ -24,7 +24,7 @@ public class JdbcUtil {
 			}
 		}
 	}
-
+	
 	public static void close(Connection conn) {
 		if (conn != null) {
 			try {
